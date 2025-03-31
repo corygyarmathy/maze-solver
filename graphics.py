@@ -52,6 +52,17 @@ class Window:
     def draw_line(self, line: Line, fill_colour: str = "black") -> None:
         line.draw(self.__canvas, fill_colour)
 
+    def get_width(self) -> int:
+        self.__root.update_idletasks()
+        return self.__canvas.winfo_width()
+
+    def get_height(self) -> int:
+        self.__root.update_idletasks()
+        return self.__canvas.winfo_height()
+
+    def get_area(self) -> int:
+        return self.get_width() * self.get_height()
+
 
 class Cell:
     def __init__(
