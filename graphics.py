@@ -50,3 +50,45 @@ class Window:
 
     def draw_line(self, line: Line, fill_colour: str = "black") -> None:
         line.draw(self.__canvas, fill_colour)
+
+
+class Cell:
+    def __init__(
+        self,
+        x1: int,
+        x2: int,
+        y1: int,
+        y2: int,
+        win: Window,
+        has_left_wall: bool = True,
+        has_right_wall: bool = True,
+        has_top_wall: bool = True,
+        has_bottom_wall: bool = True,
+        fill_colour: str = "black",
+    ) -> None:
+        self.has_left_wall: bool = has_left_wall
+        self.has_right_wall: bool = has_right_wall
+        self.has_top_wall: bool = has_top_wall
+        self.has_bottom_wall: bool = has_bottom_wall
+        self._x1: int = x1
+        self._x2: int = x2
+        self._y1: int = y1
+        self._y2: int = y2
+        self.__win: Window = win
+        self.fill_colour: str = fill_colour
+
+    def draw(self) -> None:
+        points: list[Line] = []
+        if self.has_left_wall:
+            points.append(Line(Point(self._x1, self._y1), Point(self._x1, self._y2)))
+        if self.has_right_wall:
+            points.append(Line(Point(self._x2, self._y1), Point(self._x2, self._y2)))
+        if self.has_top_wall:
+            points.append(Line(Point(self._x1, self._y1), Point(self._x2, self._y1)))
+        if self.has_bottom_wall:
+            points.append(Line(Point(self._x1, self._y2), Point(self._x2, self._y2)))
+        for line in points:
+            self.__win.draw_line(line, self.fill_colour)
+
+    # def move(self, x1: int, x2: int, y1: int, y2: int) -> None:
+    #     pass
