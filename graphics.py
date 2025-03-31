@@ -1,4 +1,5 @@
 from tkinter import BOTH, Tk, Canvas
+from typing import Self
 
 
 class Point:
@@ -77,6 +78,12 @@ class Cell:
         self.__win: Window = win
         self.fill_colour: str = fill_colour
 
+    def get_centre_x(self) -> int:
+        return (self._x1 + self._x2) // 2
+
+    def get_centre_y(self) -> int:
+        return (self._y1 + self._y2) // 2
+
     def draw(self) -> None:
         points: list[Line] = []
         if self.has_left_wall:
@@ -89,6 +96,17 @@ class Cell:
             points.append(Line(Point(self._x1, self._y2), Point(self._x2, self._y2)))
         for line in points:
             self.__win.draw_line(line, self.fill_colour)
+
+    def draw_move(self, to_cell: Self, undo: bool = False) -> None:
+        fill_colour: str = "gray" if undo else "red"
+
+        x1: int = self.get_centre_x()
+        y1: int = self.get_centre_y()
+        x2: int = to_cell.get_centre_x()
+        y2: int = to_cell.get_centre_y()
+
+        line: Line = Line(Point(x1, y1), Point(x2, y2))
+        self.__win.draw_line(line, fill_colour)
 
     # def move(self, x1: int, x2: int, y1: int, y2: int) -> None:
     #     pass

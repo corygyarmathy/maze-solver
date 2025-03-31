@@ -20,6 +20,10 @@ def main() -> None:
     c4.has_bottom_wall = False
     c4.draw()
 
+    c1.draw_move(c2)
+    c2.draw_move(c3)
+    c3.draw_move(c4)
+
     win.wait_for_close()
 
 
