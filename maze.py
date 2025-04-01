@@ -50,3 +50,6 @@ class Maze:
             if cell_count % self.__ani_factor == 0:
                 self.__win.redraw()
                 sleep(0.05)
+
+    def get_cells(self) -> list[list[Cell]]:
+        return self.__cells

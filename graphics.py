@@ -71,7 +71,7 @@ class Cell:
         x2: int,
         y1: int,
         y2: int,
-        win: Window,
+        win: Window | None = None,
         has_left_wall: bool = True,
         has_right_wall: bool = True,
         has_top_wall: bool = True,
@@ -86,7 +86,7 @@ class Cell:
         self._x2: int = x2
         self._y1: int = y1
         self._y2: int = y2
-        self.__win: Window = win
+        self.__win: Window | None = win
         self.fill_colour: str = fill_colour
 
     def get_centre_x(self) -> int:
@@ -105,8 +105,9 @@ class Cell:
             points.append(Line(Point(self._x1, self._y1), Point(self._x2, self._y1)))
         if self.has_bottom_wall:
             points.append(Line(Point(self._x1, self._y2), Point(self._x2, self._y2)))
-        for line in points:
-            self.__win.draw_line(line, self.fill_colour)
+        if self.__win:
+            for line in points:
+                self.__win.draw_line(line, self.fill_colour)
 
     def draw_move(self, to_cell: Self, undo: bool = False) -> None:
         fill_colour: str = "gray" if undo else "red"
@@ -117,7 +118,8 @@ class Cell:
         y2: int = to_cell.get_centre_y()
 
         line: Line = Line(Point(x1, y1), Point(x2, y2))
-        self.__win.draw_line(line, fill_colour)
+        if self.__win:
+            self.__win.draw_line(line, fill_colour)
 
     # def move(self, x1: int, x2: int, y1: int, y2: int) -> None:
     #     pass
