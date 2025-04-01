@@ -26,6 +26,9 @@ class Maze:
             self.__ani_factor: int = max(1, (num_rows * num_cols) // 100)
         self._create_cells()
 
+    def get_cells(self) -> list[list[Cell]]:
+        return self.__cells
+
     def _create_cells(self) -> None:
         if self.__num_cols <= 0 or self.__num_rows <= 0:
             raise ValueError("Maze dimensions must be greater than 0")
@@ -51,6 +54,3 @@ class Maze:
         if cell_count % self.__ani_factor == 0:
             self.__win.redraw()
             sleep(0.05)
-
-    def get_cells(self) -> list[list[Cell]]:
-        return self.__cells
