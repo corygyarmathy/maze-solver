@@ -45,11 +45,12 @@ class Maze:
         cell.draw()
 
     def _animate(self) -> None:
-        if self.__win:
-            cell_count: int = len(self.__cells[-1])
-            if cell_count % self.__ani_factor == 0:
-                self.__win.redraw()
-                sleep(0.05)
+        if not self.__win:
+            return
+        cell_count: int = len(self.__cells[-1])
+        if cell_count % self.__ani_factor == 0:
+            self.__win.redraw()
+            sleep(0.05)
 
     def get_cells(self) -> list[list[Cell]]:
         return self.__cells
