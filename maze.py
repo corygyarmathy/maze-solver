@@ -134,38 +134,32 @@ class Maze:
         self.__cells[i][j].visited = True
 
         # Reached the end cell. Solved!
-        if self.__cells[i][j] == self.__cells[-1][-1]:
+        if i == self.__num_cols - 1 and j == self.__num_rows - 1:
             return True
 
-        # determine valid cell(s) to move to next
-        # left
-        if i > 0 and not self.__cells[i - 1][j].visited:
-            if not self.__cells[i][j].has_left_wall:
-                self.__cells[i][j].draw_move(self.__cells[i - 1][j])
-                if self._solve_r(i - 1, j):
-                    return True
-                self.__cells[i][j].draw_move(self.__cells[i - 1][j], True)
-        # right
-        if i < self.__num_cols - 1 and not self.__cells[i + 1][j].visited:
-            if not self.__cells[i][j].has_right_wall:
-                self.__cells[i][j].draw_move(self.__cells[i + 1][j])
-                if self._solve_r(i + 1, j):
-                    return True
-                self.__cells[i][j].draw_move(self.__cells[i + 1][j], True)
-        # up
-        if j > 0 and not self.__cells[i][j - 1].visited:
-            if not self.__cells[i][j].has_top_wall:
-                self.__cells[i][j].draw_move(self.__cells[i][j - 1])
-                if self._solve_r(i, j - 1):
-                    return True
-                self.__cells[i][j].draw_move(self.__cells[i][j - 1], True)
-        # down
-        if j < self.__num_rows - 1 and not self.__cells[i][j + 1].visited:
-            if not self.__cells[i][j].has_bottom_wall:
-                self.__cells[i][j].draw_move(self.__cells[i][j + 1])
-                if self._solve_r(i, j + 1):
-                    return True
-                self.__cells[i][j].draw_move(self.__cells[i][j + 1], True)
+        # Directions: left, right, up, down
+        directions: list[tuple[int, int]] = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+        walls: list[str] = [
+            "has_left_wall",
+            "has_right_wall",
+            "has_top_wall",
+            "has_bottom_wall",
+        ]
+
+        for idx, (di, dj) in enumerate(directions):
+            ni, nj = i + di, j + dj
+            if (
+                0 <= ni < self.__num_cols
+                and 0 <= nj < self.__num_rows
+                and not self.__cells[ni][nj].visited
+            ):
+                if not getattr(self.__cells[i][j], walls[idx]):
+                    self.__cells[i][j].draw_move(to_cell=self.__cells[ni][nj])
+                    if self._solve_r(ni, nj):
+                        return True
+                    self.__cells[i][j].draw_move(
+                        to_cell=self.__cells[ni][nj], undo=True
+                    )
 
         # Invalid path
         return False
