@@ -88,6 +88,7 @@ class Cell:
         self._y2: int = y2
         self.__win: Window | None = win
         self.fill_colour: str = fill_colour
+        self.visited: bool = False
 
     def get_centre_x(self) -> int:
         return (self._x1 + self._x2) // 2
@@ -96,18 +97,24 @@ class Cell:
         return (self._y1 + self._y2) // 2
 
     def draw(self) -> None:
-        points: list[Line] = []
-        if self.has_left_wall:
-            points.append(Line(Point(self._x1, self._y1), Point(self._x1, self._y2)))
-        if self.has_right_wall:
-            points.append(Line(Point(self._x2, self._y1), Point(self._x2, self._y2)))
-        if self.has_top_wall:
-            points.append(Line(Point(self._x1, self._y1), Point(self._x2, self._y1)))
-        if self.has_bottom_wall:
-            points.append(Line(Point(self._x1, self._y2), Point(self._x2, self._y2)))
+        lines: list[Line] = []
+        lines.append(Line(Point(self._x1, self._y1), Point(self._x1, self._y2)))
+        lines.append(Line(Point(self._x2, self._y1), Point(self._x2, self._y2)))
+        lines.append(Line(Point(self._x1, self._y1), Point(self._x2, self._y1)))
+        lines.append(Line(Point(self._x1, self._y2), Point(self._x2, self._y2)))
+        colours: list[str] = [self.fill_colour for _ in range(len(lines))]
+
+        if not self.has_left_wall:
+            colours[0] = "white"
+        if not self.has_right_wall:
+            colours[1] = "white"
+        if not self.has_top_wall:
+            colours[2] = "white"
+        if not self.has_bottom_wall:
+            colours[3] = "white"
         if self.__win:
-            for line in points:
-                self.__win.draw_line(line, self.fill_colour)
+            for i in range(len(lines)):
+                self.__win.draw_line(lines[i], colours[i])
 
     def draw_move(self, to_cell: Self, undo: bool = False) -> None:
         fill_colour: str = "gray" if undo else "red"

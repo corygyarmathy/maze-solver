@@ -25,6 +25,7 @@ class Maze:
         if self.__win:
             self.__ani_factor: int = max(1, (num_rows * num_cols) // 100)
         self._create_cells()
+        self._break_entrance_and_exit()
 
     def get_cells(self) -> list[list[Cell]]:
         return self.__cells
@@ -54,3 +55,10 @@ class Maze:
         if cell_count % self.__ani_factor == 0:
             self.__win.redraw()
             sleep(0.05)
+
+    def _break_entrance_and_exit(self) -> None:
+        self.__cells[0][0].has_top_wall = False
+        self.__cells[0][0].draw()
+        self.__cells[-1][-1].has_bottom_wall = False
+        self.__cells[-1][-1].draw()
+

@@ -30,6 +30,13 @@ class TestClass(unittest.TestCase):
             num_rows,
         )
 
+    def test_maze_entrance_exit(self):
+        num_cols = 12
+        num_rows = 10
+        m1: Maze = Maze(num_rows, num_cols, 10, 10)
+        self.assertEqual(m1.get_cells()[0][0].has_top_wall, False)
+        self.assertEqual(m1.get_cells()[-1][-1].has_bottom_wall, False)
+
 
 if __name__ == "__main__":
     _ = unittest.main()
