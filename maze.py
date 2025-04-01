@@ -1,3 +1,4 @@
+import random
 from time import sleep
 from graphics import Cell, Window
 
@@ -12,6 +13,7 @@ class Maze:
         win: Window | None = None,
         x1: int = 0,
         y1: int = 0,
+        seed: int | None = None,
     ) -> None:
         self.__x1 = x1
         self.__y1 = y1
@@ -24,8 +26,12 @@ class Maze:
         self.__maze_area = (num_rows * cell_size_y) * (num_cols * cell_size_x)
         if self.__win:
             self.__ani_factor: int = max(1, (num_rows * num_cols) // 100)
+        if seed is not None:
+            random.seed(seed)
+
         self._create_cells()
         self._break_entrance_and_exit()
+        self._break_walls_r(0, 0)
 
     def get_cells(self) -> list[list[Cell]]:
         return self.__cells
@@ -62,3 +68,54 @@ class Maze:
         self.__cells[-1][-1].has_bottom_wall = False
         self.__cells[-1][-1].draw()
 
+    def _break_walls_r(self, i: int, j: int) -> None:
+        # Depth-first-search with backtracking
+        self.__cells[i][j].visited = True
+        while True:
+            # Define cardinal directions with their indices
+            directions = [
+                ((i - 1, j), 0),  # N = 0
+                ((i, j + 1), 1),  # E = 1
+                ((i + 1, j), 2),  # S = 2
+                ((i, j - 1), 3),  # W = 3
+            ]
+            to_visit: list[tuple[tuple[int, int], int]] = []
+            # Valid directions to visit
+            for (new_i, new_j), dir_idx in directions:
+                if 0 <= new_i < self.__num_rows and 0 <= new_j < self.__num_cols:
+                    if not self.__cells[new_i][new_j].visited:
+                        to_visit.append(((new_i, new_j), dir_idx))
+            if len(to_visit) == 0:
+                self.__cells[i][j].draw()
+                return
+
+            # Choose random direction from available ones
+            rand_idx: int = random.randrange(0, len(to_visit))
+            visiting = to_visit[rand_idx]
+            n_i, n_j = visiting[0]
+            direction = visiting[1]
+            self._break_wall(i, j, n_i, n_j, direction)
+            self._break_walls_r(n_i, n_j)
+
+    def _break_wall(
+        self, from_i: int, from_j: int, to_i: int, to_j: int, direction: int
+    ) -> None:
+        # Break the appropriate walls based on direction
+        if direction == 0:  # N
+            self.__cells[from_i][from_j].has_top_wall = False
+            self.__cells[to_i][to_j].has_bottom_wall = False
+        elif direction == 1:  # E
+            self.__cells[from_i][from_j].has_right_wall = False
+            self.__cells[to_i][to_j].has_left_wall = False
+        elif direction == 2:  # S
+            self.__cells[from_i][from_j].has_bottom_wall = False
+            self.__cells[to_i][to_j].has_top_wall = False
+        elif direction == 3:  # W
+            self.__cells[from_i][from_j].has_left_wall = False
+            self.__cells[to_i][to_j].has_right_wall = False
+        else:
+            raise ValueError("Invalid cardinality index")
+
+        # Draw both cells
+        self.__cells[from_i][from_j].draw()
+        self.__cells[to_i][to_j].draw()
